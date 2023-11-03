@@ -10,5 +10,3 @@ app_context.push()
 api = Api(app)
 api.add_resource(GetPing, '/api/validador/ping')
 api.add_resource(ViewGetProfile, '/getprofile')
-
-
