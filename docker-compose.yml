@@ -1,0 +1,97 @@
+version: '3'
+services:
+  validador:
+    image: validador:1.0
+    ports:
+      - 5005:5000
+    environment:
+      - PY_DB_NAME=dbvalidador
+      - PY_DB_USER=usdbvalidador
+      - PY_DB_PASS=passusdbvalidador
+      - PY_DB_HOST=db
+      - PY_DB_PORT=5432
+      - HOST_ME_UNO=http://motor-emparejamiento-1
+      - HOST_ME_DOS=http://motor-emparejamiento-2
+      - HOST_ME_TRES=http://motor-emparejamiento-3
+      - HOST_PORT_UNO=5000
+      - HOST_PORT_DOS=5000
+      - HOST_PORT_TRES=5000    
+    networks:
+      - app_network   
+
+  motor-emparejamiento-1:
+    image: motor-emparejamiento:1.0
+    ports:
+      - "5001:5000"
+    restart: always
+    environment:
+      CONTAINER: SI
+      POSTGRES_URL: postgresql+psycopg2://admin:admin@CandidatosDB:5432/Candidatos
+      SECRET_KEY: proyecto1
+      AMBIENTE: produccion
+      PERFILES_MS: http://perfiles:5000
+    env_file:
+      - motor-emparejamiento/.env
+    networks:
+      - app_network
+  
+  motor-emparejamiento-2:
+    image: motor-emparejamiento:1.0
+    ports:
+      - "5002:5000"
+    restart: always
+    environment:
+      CONTAINER: SI
+      POSTGRES_URL: postgresql+psycopg2://admin:admin@CandidatosDB:5432/Candidatos
+      SECRET_KEY: proyecto1
+      AMBIENTE: produccion
+      PERFILES_MS: http://perfiles:5000
+    env_file:
+      - motor-emparejamiento/.env
+    networks:
+      - app_network
+  
+  motor-emparejamiento-3:
+    image: motor-emparejamiento:1.0
+    ports:
+      - "5003:5000"
+    restart: always
+    environment:
+      CONTAINER: SI
+      POSTGRES_URL: postgresql+psycopg2://admin:admin@CandidatosDB:5432/Candidatos
+      SECRET_KEY: proyecto1
+      AMBIENTE: produccion
+      PERFILES_MS: http://perfiles:5000
+    env_file:
+      - motor-emparejamiento/.env
+    networks:
+      - app_network
+
+  perfiles:
+    image: perfiles:1.0
+    ports:
+      - 5004:5000
+    environment:
+      - PY_DB_NAME=dbvalidador
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_PASSWORD=redis123
+      - REDIS_EXPIRE=60000
+    depends_on:
+      - redis
+    networks:
+      - app_network
+  
+  redis:
+    image: redis
+    command: redis-server --requirepass redis123
+    environment:
+      - REDIS_PASSWORD=redis123
+    ports:
+      - "6379:6379"
+    networks:
+      - app_network
+
+networks:
+  app_network:
+    driver: bridge
