@@ -2,12 +2,6 @@ from flask import Flask, request, jsonify
 from flask_restful import Api
 from vistas import VistaPing, VistaEmparejar
 
-# from motoremp_ms import create_app
-# from motoremp_ms.vistas.vistas import VistaPing, VistaEmparejar
-# from flask_restful import Api
-
-# app=create_app('default')
-
 app = Flask(__name__)
 
 app_context=app.app_context()
